@@ -1,20 +1,37 @@
 package com.utkarsh.CampusKey;
 
+import static com.utkarsh.CampusKey.LocalData.DESCRIPTION;
+import static com.utkarsh.CampusKey.LocalData.FORCE;
+import static com.utkarsh.CampusKey.LocalData.MAIN_TEXT;
+
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.firebase.Firebase;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import static com.utkarsh.CampusKey.LocalData.MINIMUM_VERSION_CODE;
+import static com.utkarsh.CampusKey.LocalData.URL;
 
 public class SuccessActivity extends AppCompatActivity {
     boolean isLikedClicked=false;
     private MediaPlayer mediaPlayer;
+    // Reference to the Firebase Realtime Database
+    private DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +103,37 @@ public class SuccessActivity extends AppCompatActivity {
 
             }
         },1000);
+    }
+    void fetchDataFormFirebase() {
+        // Initialize Firebase Database reference
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        // Replace "users" with the path you want to retrieve data from
+        databaseReference.child("CampusKey")// Replace "userID" with the actual key or path
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            // Extract data from the DataSnapshot object
+                            LocalData data = new LocalData(SuccessActivity.this);
+                            data.save(URL,dataSnapshot.child("URL").getValue(String.class));
+                            data.save(MAIN_TEXT,dataSnapshot.child("MAIN_TEXT").getValue(String.class));
+                            data.save(DESCRIPTION,dataSnapshot.child("DESCRIPTION").getValue(String.class));
+                            data.save(MINIMUM_VERSION_CODE,dataSnapshot.child("MINIMUM_VERSION_CODE").getValue(Integer.class));
+                            data.save(FORCE,dataSnapshot.child("FORCE").getValue(Boolean.class));
+
+
+                        } else {
+                            Log.d("FirebaseData", "No such data exists");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        // Handle possible errors
+                        Log.d("FirebaseData", "Fetch failed: " + databaseError.getMessage());
+                    }
+                });
     }
 
 

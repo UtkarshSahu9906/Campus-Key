@@ -1,7 +1,14 @@
 package com.utkarsh.CampusKey;
 
+import static com.utkarsh.CampusKey.LocalData.DESCRIPTION;
+import static com.utkarsh.CampusKey.LocalData.FORCE;
+import static com.utkarsh.CampusKey.LocalData.MAIN_TEXT;
+import static com.utkarsh.CampusKey.LocalData.URL;
+
+import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,6 +21,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.webkit.WebSettings;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.utkarsh.CampusKey.databinding.ActivityMainBinding;
@@ -31,20 +40,25 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-         binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        LocalData data = new LocalData(MainActivity.this);
+        if (AppUtils.getVersionCode(MainActivity.this) < data.getInt(LocalData.MINIMUM_VERSION_CODE)) {
+            showUpdateDialog(data.getString(URL),data.getString(MAIN_TEXT),data.getString(DESCRIPTION),data.getBoolean(FORCE));
+        } else  {
+            getCredentials();
+        }
 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
-        getCredentials();
+
 
 
     }
 
-  // To avoid multiple login attempts
+    // To avoid multiple login attempts
 
     public void startLoginAttempt(String Username, String Password) {
         // Enable JavaScript
@@ -120,23 +134,20 @@ public class MainActivity extends AppCompatActivity {
                     db.addUser(username, password);
                     binding.textViewMessage.setText("Credentials saved!");
                     dialog.dismiss(); // Close dialog after saving
-                    startLoginAttempt(username,password);
+                    startLoginAttempt(username, password);
                 }
             }
         });
 
         dialog.show();
     }
+
     public void getCredentials() {
         DatabaseHelper db = new DatabaseHelper(this);
         Cursor cursor = db.getUser();
 
         if (cursor.moveToFirst()) {
-
-
-
-            startLoginAttempt(cursor.getString(cursor.getColumnIndexOrThrow("username")),cursor.getString(cursor.getColumnIndexOrThrow("password")));
-
+            startLoginAttempt(cursor.getString(cursor.getColumnIndexOrThrow("username")), cursor.getString(cursor.getColumnIndexOrThrow("password")));
             Toast.makeText(this, "Username: " + "\nPassword: ", Toast.LENGTH_LONG).show();
         } else {
             showCredentialSaveDialog();
@@ -145,14 +156,44 @@ public class MainActivity extends AppCompatActivity {
         cursor.close();
     }
 
-    public void dismissCredentialDialog() {
-        if (dialog != null && dialog.isShowing()) {
-            dialog.dismiss(); // Dismiss the dialog if it's currently showing
+
+
+    private void showUpdateDialog(String updateUrl, String main_Text, String description, boolean forceUpdate) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.version_check_dialog, null);
+        builder.setView(dialogView);
+
+        // Find views in the dialog
+        TextView mainText = dialogView.findViewById(R.id.mainText);
+        TextView descriptionText = dialogView.findViewById(R.id.descriptionText);
+        Button buttonCancel = dialogView.findViewById(R.id.buttonCancel);
+        Button buttonUpdate = dialogView.findViewById(R.id.buttonUpdate);
+
+        // Set the main text and description
+        mainText.setText(main_Text);
+        descriptionText.setText(description);
+
+        if(!forceUpdate){
+            buttonCancel.setVisibility(View.VISIBLE);
         }
+
+        // Set the click listeners for the buttons
+        buttonCancel.setOnClickListener(v -> {
+            // Close the dialog if the user clicks "Cancel"
+            dialog.dismiss();
+            getCredentials();
+        });
+
+        buttonUpdate.setOnClickListener(v -> {
+            // Open the update URL in the browser when the "Update" button is clicked
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl));
+            startActivity(browserIntent);
+            dialog.dismiss();
+        });
+
+        // Create and show the dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
-
-
-
-
-
 }
