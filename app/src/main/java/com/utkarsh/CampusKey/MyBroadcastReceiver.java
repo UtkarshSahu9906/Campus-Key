@@ -1,4 +1,4 @@
-package com.utkarsh.CampusKe;
+package com.utkarsh.CampusKey;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

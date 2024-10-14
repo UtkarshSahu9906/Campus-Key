@@ -1,4 +1,4 @@
-package com.utkarsh.CampusKe;
+package com.utkarsh.CampusKey;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -12,13 +12,12 @@ import android.webkit.WebViewClient;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 
 import android.webkit.WebSettings;
 import android.widget.Toast;
 
-import com.utkarsh.CampusKe.databinding.ActivityMainBinding;
-import com.utkarsh.CampusKe.databinding.SaveCredentialsDialogBinding;
+import com.utkarsh.CampusKey.databinding.ActivityMainBinding;
+import com.utkarsh.CampusKey.databinding.SaveCredentialsDialogBinding;
 
 public class MainActivity extends AppCompatActivity {
 
