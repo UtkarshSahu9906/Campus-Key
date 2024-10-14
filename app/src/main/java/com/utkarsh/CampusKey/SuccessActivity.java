@@ -2,6 +2,7 @@ package com.utkarsh.CampusKey;
 
 import static com.utkarsh.CampusKey.LocalData.DESCRIPTION;
 import static com.utkarsh.CampusKey.LocalData.FORCE;
+import static com.utkarsh.CampusKey.LocalData.LAST_CHECK_TIME;
 import static com.utkarsh.CampusKey.LocalData.MAIN_TEXT;
 
 import android.content.Intent;
@@ -32,6 +33,7 @@ public class SuccessActivity extends AppCompatActivity {
     private MediaPlayer mediaPlayer;
     // Reference to the Firebase Realtime Database
     private DatabaseReference databaseReference;
+    LocalData data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,11 @@ public class SuccessActivity extends AppCompatActivity {
         lottieAnimationView.playAnimation();
         closeApp();
         soundEffect();
+
+         data = new LocalData(SuccessActivity.this);
+
+
+checkAndFetchData();
 
         // Instagram Link
         ImageView imageViewInstagram = findViewById(R.id.imageViewInstagram);
@@ -115,7 +122,7 @@ public class SuccessActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             // Extract data from the DataSnapshot object
-                            LocalData data = new LocalData(SuccessActivity.this);
+
                             data.save(URL,dataSnapshot.child("URL").getValue(String.class));
                             data.save(MAIN_TEXT,dataSnapshot.child("MAIN_TEXT").getValue(String.class));
                             data.save(DESCRIPTION,dataSnapshot.child("DESCRIPTION").getValue(String.class));
@@ -134,6 +141,17 @@ public class SuccessActivity extends AppCompatActivity {
                         Log.d("FirebaseData", "Fetch failed: " + databaseError.getMessage());
                     }
                 });
+    }
+
+    void checkAndFetchData() {
+        long lastCheckTime = data.getLong(LAST_CHECK_TIME); // Retrieve the last check time
+        long currentTime = System.currentTimeMillis(); // Get the current time
+
+        // Check if more than one day has passed since the last check
+        if (lastCheckTime + 86400000 < currentTime) {
+            fetchDataFormFirebase(); // Fetch data from Firebase
+            data.save(LAST_CHECK_TIME, currentTime); // Save the current time as the last check time
+        }
     }
 
 

@@ -9,6 +9,7 @@ public class LocalData {
     static final String URL = "864383";
     static final String FORCE = "92747";
     static final String MINIMUM_VERSION_CODE = "36656";
+    static final String LAST_CHECK_TIME= "67533";
     Context context;
 
     public LocalData(Context context) {
@@ -25,6 +26,10 @@ public class LocalData {
     public int getInt(String key) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
         return sharedPreferences.getInt(key, -1);
+    }
+    public long getLong(String key) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        return sharedPreferences.getLong(key, -1);
     }
 
     // Method to save a String in SharedPreferences
@@ -55,5 +60,11 @@ public class LocalData {
     public boolean getBoolean(String key) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
         return sharedPreferences.getBoolean(key, false); // default is false if not found
+    }
+    public void save(String key, long value) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putLong(key, value);
+        editor.apply();
     }
 }
