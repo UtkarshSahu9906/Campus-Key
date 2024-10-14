@@ -3,6 +3,7 @@ package com.utkarsh.CampusKey;
 import static com.utkarsh.CampusKey.LocalData.DESCRIPTION;
 import static com.utkarsh.CampusKey.LocalData.FORCE;
 import static com.utkarsh.CampusKey.LocalData.MAIN_TEXT;
+import static com.utkarsh.CampusKey.LocalData.NETWORK_ERROR;
 import static com.utkarsh.CampusKey.LocalData.URL;
 
 import android.app.Dialog;
@@ -11,9 +12,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -27,6 +31,7 @@ import android.widget.Toast;
 
 import com.utkarsh.CampusKey.databinding.ActivityMainBinding;
 import com.utkarsh.CampusKey.databinding.SaveCredentialsDialogBinding;
+import com.utkarsh.CampusKey.databinding.VersionCheckDialogBinding;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isGo = false; // Class-level variable
 
     ActivityMainBinding binding;
+    private boolean isNetworkError =false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,9 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 if (url.contains("http://172.24.64.1:8090/httpclient.html")) { // Replace with the actual success URL
                     if (!isGo) { // Check if SuccessActivity has already been started
                         isGo = true; // Mark that we have navigated to SuccessActivity
-                        Intent intent = new Intent(MainActivity.this, SuccessActivity.class);
-                        startActivity(intent);
-                        finish(); // Close MainActivity if you don't want to return to it
+                       goToNext();
                     }
                 }
 
@@ -95,6 +99,14 @@ public class MainActivity extends AppCompatActivity {
                             null
                     );
                 }
+            }
+
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                super.onReceivedError(view, request, error);
+                isNetworkError=true;
+
+
             }
         });
 
@@ -148,10 +160,10 @@ public class MainActivity extends AppCompatActivity {
 
         if (cursor.moveToFirst()) {
             startLoginAttempt(cursor.getString(cursor.getColumnIndexOrThrow("username")), cursor.getString(cursor.getColumnIndexOrThrow("password")));
-            Toast.makeText(this, "Username: " + "\nPassword: ", Toast.LENGTH_LONG).show();
+
         } else {
             showCredentialSaveDialog();
-            Toast.makeText(this, "No credentials found", Toast.LENGTH_SHORT).show();
+
         }
         cursor.close();
     }
@@ -160,40 +172,59 @@ public class MainActivity extends AppCompatActivity {
 
     private void showUpdateDialog(String updateUrl, String main_Text, String description, boolean forceUpdate) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        // Inflate the dialog layout
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.version_check_dialog, null);
-        builder.setView(dialogView);
 
-        // Find views in the dialog
-        TextView mainText = dialogView.findViewById(R.id.mainText);
-        TextView descriptionText = dialogView.findViewById(R.id.descriptionText);
-        Button buttonCancel = dialogView.findViewById(R.id.buttonCancel);
-        Button buttonUpdate = dialogView.findViewById(R.id.buttonUpdate);
+        // Initialize View Binding
+        VersionCheckDialogBinding binding = VersionCheckDialogBinding.inflate(inflater, (ViewGroup) dialogView, false);
+        builder.setView(binding.getRoot());
+
+        builder.setCancelable(false); // Allow canceling by tapping outside
+        AlertDialog dialog = builder.create();
+
+
 
         // Set the main text and description
-        mainText.setText(main_Text);
-        descriptionText.setText(description);
+        binding.mainText.setText(main_Text);
+        binding.descriptionText.setText(description);
 
         if(!forceUpdate){
-            buttonCancel.setVisibility(View.VISIBLE);
+            binding.buttonCancel.setVisibility(View.VISIBLE);
         }
 
         // Set the click listeners for the buttons
-        buttonCancel.setOnClickListener(v -> {
+        binding.buttonCancel.setOnClickListener(v -> {
             // Close the dialog if the user clicks "Cancel"
             dialog.dismiss();
             getCredentials();
         });
 
-        buttonUpdate.setOnClickListener(v -> {
+        binding.buttonUpdate.setOnClickListener(v -> {
             // Open the update URL in the browser when the "Update" button is clicked
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(updateUrl));
             startActivity(browserIntent);
             dialog.dismiss();
         });
 
-        // Create and show the dialog
-        AlertDialog dialog = builder.create();
+
         dialog.show();
     }
+
+    void goToNext() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                Intent intent = new Intent(MainActivity.this, SuccessActivity.class);
+                intent.putExtra(NETWORK_ERROR, isNetworkError);
+                startActivity(intent);
+                finish(); // Close MainActivity if you don't want to return to it
+
+            }
+        }, 200);
+    }
+
+
 }

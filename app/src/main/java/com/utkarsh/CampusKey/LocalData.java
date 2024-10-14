@@ -10,6 +10,7 @@ public class LocalData {
     static final String FORCE = "92747";
     static final String MINIMUM_VERSION_CODE = "36656";
     static final String LAST_CHECK_TIME= "67533";
+    static final String NETWORK_ERROR= "87464";
     Context context;
 
     public LocalData(Context context) {

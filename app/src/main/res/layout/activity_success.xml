@@ -11,19 +11,31 @@
 
 
     <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/lottieAnimationView"
+        android:id="@+id/doneAnimation"
         android:layout_width="200dp"
         android:layout_height="200dp"
+        android:visibility="gone"
         app:lottie_autoPlay="true"
         app:lottie_loop="false"
         app:lottie_rawRes="@raw/done_task" />
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/networkErrorAnimation"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:visibility="gone"
+        app:lottie_autoPlay="true"
+        app:lottie_loop="false"
+        app:lottie_rawRes="@raw/network_error" />
+
 
     <TextView
-        android:id="@+id/textViewSuccessMessage"
-        android:layout_width="wrap_content"
+        android:id="@+id/connectionStatusMessage"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:fontFamily="@font/allerta_stencil"
+        android:gravity="center"
         android:text="Successfully Logged In!"
         android:textColor="@color/white"
         android:textSize="24sp" />
