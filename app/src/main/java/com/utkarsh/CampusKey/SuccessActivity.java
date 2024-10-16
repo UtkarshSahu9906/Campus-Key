@@ -51,6 +51,7 @@ public class SuccessActivity extends AppCompatActivity {
             networkErrorSoundEffect();
             binding.networkErrorAnimation.setVisibility(View.VISIBLE);
             binding.connectionStatusMessage.setText("Network error occurred! Please check your Wi-Fi connection.");
+            binding.retry.setVisibility(View.VISIBLE);
 
         } else {
             doneSoundEffect();
@@ -62,6 +63,44 @@ public class SuccessActivity extends AppCompatActivity {
         binding.networkErrorAnimation.playAnimation();
         binding.doneAnimation.playAnimation();
         closeApp();
+
+
+        binding.share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isLikedClicked =true;
+                String packageName = getPackageName();
+
+                String shareBody = "Check out this app: https://play.google.com/store/apps/details?id=" + packageName;
+
+
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, "My App");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
+
+                startActivity(Intent.createChooser(shareIntent, "Share via"));
+
+            }
+        });
+
+        binding.retry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(SuccessActivity.this, "Retrying...", Toast.LENGTH_SHORT).show();
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        startActivity(new Intent(SuccessActivity.this,MainActivity.class));
+                        isLikedClicked = true;
+                        finish();
+                    }
+                },1000);
+
+            }
+        });
 
 
         data = new LocalData(SuccessActivity.this);

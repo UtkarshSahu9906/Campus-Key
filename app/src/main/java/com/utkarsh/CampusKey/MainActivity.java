@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean loginAttempted = false;
     private boolean isGo = false; // Class-level variable
 
+
     ActivityMainBinding binding;
     private boolean isNetworkError =false;
 
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void startLoginAttempt(String Username, String Password) {
         // Enable JavaScript
-        binding.webView.setVisibility(View.VISIBLE);
+
         binding.webView.getSettings().setJavaScriptEnabled(true);
 
         // Allow mixed content (HTTP + HTTPS)
@@ -105,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 super.onReceivedError(view, request, error);
                 isNetworkError=true;
+
 
 
             }
@@ -159,7 +161,21 @@ public class MainActivity extends AppCompatActivity {
         Cursor cursor = db.getUser();
 
         if (cursor.moveToFirst()) {
-            startLoginAttempt(cursor.getString(cursor.getColumnIndexOrThrow("username")), cursor.getString(cursor.getColumnIndexOrThrow("password")));
+            binding.networkSearching.setVisibility(View.VISIBLE);
+
+            String username = cursor.getString(cursor.getColumnIndexOrThrow("username"));
+            String password = cursor.getString(cursor.getColumnIndexOrThrow("password"));
+
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startLoginAttempt(username,password);
+
+
+                }
+            }, 500);
+
 
         } else {
             showCredentialSaveDialog();
@@ -216,7 +232,6 @@ public class MainActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-
                 Intent intent = new Intent(MainActivity.this, SuccessActivity.class);
                 intent.putExtra(NETWORK_ERROR, isNetworkError);
                 startActivity(intent);

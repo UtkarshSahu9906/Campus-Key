@@ -40,6 +40,7 @@
         android:textColor="@color/white"
         android:textSize="24sp" />
 
+
     <TextView
         android:id="@+id/textViewLinks"
         android:layout_width="wrap_content"
@@ -48,6 +49,7 @@
         android:text="Follow us on:"
         android:textColor="@color/white"
         android:textSize="18sp" />
+
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -70,5 +72,75 @@
             android:contentDescription="LinkedIn"
             android:src="@drawable/linkedin" />
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/retry"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="20dp"
+        app:tint="#FFFFFF"
+        android:visibility="gone"
+        app:srcCompat="@drawable/refresh" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/share"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:elevation="20dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/share_btn_background"
+            app:cardCornerRadius="30dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/share_btn_background">
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:fontFamily="@font/aclonica"
+                    android:gravity="center"
+                    android:paddingLeft="35dp"
+                    android:text="Share"
+                    android:textColor="#FFFFFF"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            app:cardCornerRadius="50dp"
+            android:elevation="30dp"
+            android:layout_marginLeft="-5dp"
+            app:layout_constraintBottom_toBottomOf="@+id/cardView"
+            app:layout_constraintStart_toStartOf="@+id/cardView"
+            app:layout_constraintTop_toTopOf="@+id/cardView">
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@drawable/share_btn_background"
+                android:padding="7dp"
+                app:srcCompat="@drawable/baseline_share_24" />
+        </androidx.cardview.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

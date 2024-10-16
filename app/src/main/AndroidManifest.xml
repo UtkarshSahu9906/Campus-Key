@@ -29,13 +29,7 @@
             </intent-filter>
         </activity>
 
-        <receiver
-            android:name=".MyBroadcastReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
