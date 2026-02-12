@@ -48,14 +48,20 @@ public class SuccessActivity extends AppCompatActivity {
         boolean networkError = getIntent().getBooleanExtra(NETWORK_ERROR, false);
 
         if (networkError) {
+
             networkErrorSoundEffect();
             binding.networkErrorAnimation.setVisibility(View.VISIBLE);
             binding.connectionStatusMessage.setText("Network error occurred! Please check your Wi-Fi connection.");
             binding.retry.setVisibility(View.VISIBLE);
 
         } else {
-            doneSoundEffect();
-            binding.doneAnimation.setVisibility(View.VISIBLE);
+            Toast.makeText(SuccessActivity.this, "Connected", Toast.LENGTH_SHORT).show();
+
+        //    doneSoundEffect();
+          //  binding.doneAnimation.setVisibility(View.VISIBLE);
+            finishAffinity(); // Closes all activities in the app
+
+
 
         }
 
@@ -145,7 +151,7 @@ public class SuccessActivity extends AppCompatActivity {
                     // or System.exit(0); // Forcefully exits the app
                 }
             }
-        }, 4000);
+        }, 2000);
 
     }
 

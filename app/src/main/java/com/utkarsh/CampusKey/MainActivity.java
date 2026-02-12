@@ -7,8 +7,12 @@ import static com.utkarsh.CampusKey.LocalData.NETWORK_ERROR;
 import static com.utkarsh.CampusKey.LocalData.URL;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -42,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     ActivityMainBinding binding;
-    private boolean isNetworkError =false;
+    private boolean isNetworkError = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +55,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         LocalData data = new LocalData(MainActivity.this);
         if (AppUtils.getVersionCode(MainActivity.this) < data.getInt(LocalData.MINIMUM_VERSION_CODE)) {
-            showUpdateDialog(data.getString(URL),data.getString(MAIN_TEXT),data.getString(DESCRIPTION),data.getBoolean(FORCE));
-        } else  {
+            showUpdateDialog(data.getString(URL), data.getString(MAIN_TEXT), data.getString(DESCRIPTION), data.getBoolean(FORCE));
+        } else {
             getCredentials();
         }
 
@@ -60,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
-
 
 
     }
@@ -82,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 if (url.contains("http://172.24.64.1:8090/httpclient.html")) { // Replace with the actual success URL
                     if (!isGo) { // Check if SuccessActivity has already been started
                         isGo = true; // Mark that we have navigated to SuccessActivity
-                       goToNext();
+                        goToNext();
                     }
                 }
 
@@ -105,8 +108,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
                 super.onReceivedError(view, request, error);
-                isNetworkError=true;
-
+                isNetworkError = true;
 
 
             }
@@ -161,20 +163,21 @@ public class MainActivity extends AppCompatActivity {
         Cursor cursor = db.getUser();
 
         if (cursor.moveToFirst()) {
-            binding.networkSearching.setVisibility(View.VISIBLE);
+            goToNextWithoutWorkDOne();
+
 
             String username = cursor.getString(cursor.getColumnIndexOrThrow("username"));
             String password = cursor.getString(cursor.getColumnIndexOrThrow("password"));
 
-
+            binding.webView.setVisibility(View.VISIBLE);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    startLoginAttempt(username,password);
+                    startLoginAttempt(username, password);
 
 
                 }
-            }, 500);
+            }, 100);
 
 
         } else {
@@ -183,7 +186,6 @@ public class MainActivity extends AppCompatActivity {
         }
         cursor.close();
     }
-
 
 
     private void showUpdateDialog(String updateUrl, String main_Text, String description, boolean forceUpdate) {
@@ -201,12 +203,11 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog dialog = builder.create();
 
 
-
         // Set the main text and description
         binding.mainText.setText(main_Text);
         binding.descriptionText.setText(description);
 
-        if(!forceUpdate){
+        if (!forceUpdate) {
             binding.buttonCancel.setVisibility(View.VISIBLE);
         }
 
@@ -238,7 +239,23 @@ public class MainActivity extends AppCompatActivity {
                 finish(); // Close MainActivity if you don't want to return to it
 
             }
-        }, 200);
+        }, 20);
+    }
+
+    void goToNextWithoutWorkDOne() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!isGo) {
+                    Intent intent = new Intent(MainActivity.this, SuccessActivity.class);
+                    intent.putExtra(NETWORK_ERROR, true);
+                    startActivity(intent);
+                    finish(); // Close MainActivity if you don't want to return to it
+
+                }
+
+            }
+        }, 5000);
     }
 
 
