@@ -1,25 +1,27 @@
 package com.utkarsh.CampusKey;
 
+
 import static com.utkarsh.CampusKey.LocalData.DESCRIPTION;
 import static com.utkarsh.CampusKey.LocalData.FORCE;
 import static com.utkarsh.CampusKey.LocalData.LAST_CHECK_TIME;
 import static com.utkarsh.CampusKey.LocalData.MAIN_TEXT;
+import static com.utkarsh.CampusKey.LocalData.MINIMUM_VERSION_CODE;
+import static com.utkarsh.CampusKey.LocalData.NETWORK_ERROR;
+import static com.utkarsh.CampusKey.LocalData.URL;
 
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.airbnb.lottie.LottieAnimationView;
-import com.google.firebase.Firebase;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,17 +29,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.utkarsh.CampusKey.databinding.ActivitySuccessBinding;
 
-import static com.utkarsh.CampusKey.LocalData.MINIMUM_VERSION_CODE;
-import static com.utkarsh.CampusKey.LocalData.NETWORK_ERROR;
-import static com.utkarsh.CampusKey.LocalData.URL;
-
 public class SuccessActivity extends AppCompatActivity {
-    boolean isLikedClicked = false;
+
+    private boolean userIsEngaged = false;
     private MediaPlayer mediaPlayer;
-    // Reference to the Firebase Realtime Database
     private DatabaseReference databaseReference;
-    LocalData data;
+    private LocalData data;
     ActivitySuccessBinding binding;
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,200 +44,132 @@ public class SuccessActivity extends AppCompatActivity {
         binding = ActivitySuccessBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        data = new LocalData(this);
+        checkAndFetchConfig();
+
         boolean networkError = getIntent().getBooleanExtra(NETWORK_ERROR, false);
 
         if (networkError) {
-
-            networkErrorSoundEffect();
-            binding.networkErrorAnimation.setVisibility(View.VISIBLE);
-            binding.connectionStatusMessage.setText("Network error occurred! Please check your Wi-Fi connection.");
-            binding.retry.setVisibility(View.VISIBLE);
-
+            showErrorState();
         } else {
-            Toast.makeText(SuccessActivity.this, "Connected", Toast.LENGTH_SHORT).show();
-
-        //    doneSoundEffect();
-          //  binding.doneAnimation.setVisibility(View.VISIBLE);
-            finishAffinity(); // Closes all activities in the app
-
-
-
+            showSuccessState();
         }
 
+        setupButtons();
+    }
 
-        binding.networkErrorAnimation.playAnimation();
+    // ── UI states ────────────────────────────────
+    private void showSuccessState() {
+        binding.networkErrorAnimation.setVisibility(View.GONE);
+        binding.retry.setVisibility(View.GONE);
+        binding.doneAnimation.setVisibility(View.VISIBLE);
         binding.doneAnimation.playAnimation();
-        closeApp();
+        binding.connectionStatusMessage.setText("Connected to college Wi-Fi!");
+        playSound(R.raw.done_sound);
 
+        // Auto-close after 3 seconds if user isn't tapping anything
+        handler.postDelayed(() -> {
+            if (!userIsEngaged) finishAffinity();
+        }, 3000);
+    }
 
-        binding.share.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                isLikedClicked =true;
-                String packageName = getPackageName();
+    private void showErrorState() {
+        binding.doneAnimation.setVisibility(View.GONE);
+        binding.networkErrorAnimation.setVisibility(View.VISIBLE);
+        binding.networkErrorAnimation.playAnimation();
+        binding.connectionStatusMessage.setText(
+                "Could not connect. Please check your Wi-Fi and try again.");
+        binding.retry.setVisibility(View.VISIBLE);
+        playSound(R.raw.networ_error_sound);
+    }
 
-                String shareBody = "Check out this app: https://play.google.com/store/apps/details?id=" + packageName;
+    // ── Buttons ──────────────────────────────────
+    private void setupButtons() {
+        binding.imageViewInstagram.setOnClickListener(v ->
+                openUrl("https://www.instagram.com/mr._utkarsh_sahu/"));
 
+        binding.imageViewLinkedIn.setOnClickListener(v ->
+                openUrl("https://www.linkedin.com/in/utkarshsahu9906/"));
 
-                Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                shareIntent.setType("text/plain");
-                shareIntent.putExtra(Intent.EXTRA_SUBJECT, "My App");
-                shareIntent.putExtra(Intent.EXTRA_TEXT, shareBody);
-
-                startActivity(Intent.createChooser(shareIntent, "Share via"));
-
-            }
+        binding.share.setOnClickListener(v -> {
+            userIsEngaged = true;
+            String shareBody = "Auto-connect to college Wi-Fi! Download CampusKey:\n"
+                    + "https://play.google.com/store/apps/details?id=" + getPackageName();
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType("text/plain");
+            i.putExtra(Intent.EXTRA_SUBJECT, "CampusKey App");
+            i.putExtra(Intent.EXTRA_TEXT, shareBody);
+            startActivity(Intent.createChooser(i, "Share via"));
         });
 
-        binding.retry.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(SuccessActivity.this, "Retrying...", Toast.LENGTH_SHORT).show();
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        startActivity(new Intent(SuccessActivity.this,MainActivity.class));
-                        isLikedClicked = true;
-                        finish();
-                    }
-                },1000);
-
-            }
-        });
-
-
-        data = new LocalData(SuccessActivity.this);
-
-
-        checkAndFetchData();
-
-        // Instagram Link
-        ImageView imageViewInstagram = findViewById(R.id.imageViewInstagram);
-        imageViewInstagram.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openUrl("https://www.instagram.com/mr._utkarsh_sahu/"); // Replace with your Instagram link
-            }
-        });
-
-        // LinkedIn Link
-        ImageView imageViewLinkedIn = findViewById(R.id.imageViewLinkedIn);
-        imageViewLinkedIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openUrl("https://www.linkedin.com/in/utkarshsahu9906/"); // Replace with your LinkedIn link
-            }
+        binding.retry.setOnClickListener(v -> {
+            Toast.makeText(this, "Retrying...", Toast.LENGTH_SHORT).show();
+            handler.postDelayed(() -> {
+                startActivity(new Intent(this, MainActivity.class));
+                finish();
+            }, 800);
         });
     }
 
     private void openUrl(String url) {
-        isLikedClicked = true;
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(url));
-        startActivity(intent);
+        userIsEngaged = true;
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
     }
 
-    void closeApp() {
-
-        // Close the app completely after 5 seconds
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (!isLikedClicked) {
-                    finishAffinity(); // Closes all activities in the app
-                    // or System.exit(0); // Forcefully exits the app
-                }
+    // ── Sound ────────────────────────────────────
+    private void playSound(int resId) {
+        try {
+            if (mediaPlayer != null) mediaPlayer.release();
+            mediaPlayer = MediaPlayer.create(this, resId);
+            if (mediaPlayer != null) {
+                mediaPlayer.start();
+                mediaPlayer.setOnCompletionListener(MediaPlayer::release);
             }
-        }, 2000);
-
-    }
-
-    void doneSoundEffect() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // Replace 'success_sound' with your file name
-                mediaPlayer = MediaPlayer.create(SuccessActivity.this, R.raw.done_sound);
-                // Play the sound
-                if (mediaPlayer != null) {
-                    mediaPlayer.start();
-                    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                        @Override
-                        public void onCompletion(MediaPlayer mp) {
-                            mp.release(); // Release the MediaPlayer resources
-                        }
-                    });
-                }
-
-            }
-        }, 1000);
-    }
-
-    void networkErrorSoundEffect() {
-
-        // Replace 'success_sound' with your file name
-        mediaPlayer = MediaPlayer.create(SuccessActivity.this, R.raw.networ_error_sound);
-        // Play the sound
-        if (mediaPlayer != null) {
-            mediaPlayer.start();
-            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    mp.release(); // Release the MediaPlayer resources
-                }
-            });
-        }
-
-
-    }
-
-
-    void fetchDataFormFirebase() {
-        // Initialize Firebase Database reference
-        databaseReference = FirebaseDatabase.getInstance().getReference();
-
-        // Replace "users" with the path you want to retrieve data from
-        databaseReference.child("CampusKey")// Replace "userID" with the actual key or path
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            // Extract data from the DataSnapshot object
-
-                            data.save(URL, dataSnapshot.child("URL").getValue(String.class));
-                            data.save(MAIN_TEXT, dataSnapshot.child("MAIN_TEXT").getValue(String.class));
-                            data.save(DESCRIPTION, dataSnapshot.child("DESCRIPTION").getValue(String.class));
-                            data.save(MINIMUM_VERSION_CODE, dataSnapshot.child("MINIMUM_VERSION_CODE").getValue(Integer.class));
-                            data.save(FORCE, dataSnapshot.child("FORCE").getValue(Boolean.class));
-
-
-                        } else {
-                            Log.d("FirebaseData", "No such data exists");
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        // Handle possible errors
-                        Log.d("FirebaseData", "Fetch failed: " + databaseError.getMessage());
-                    }
-                });
-    }
-
-    void checkAndFetchData() {
-
-        long lastCheckTime = data.getLong(LAST_CHECK_TIME); // Retrieve the last check time
-        long currentTime = System.currentTimeMillis(); // Get the current time
-
-        // Check if more than one day has passed since the last check
-        if (lastCheckTime + 86400000 < currentTime) {
-
-            fetchDataFormFirebase(); // Fetch data from Firebase
-            data.save(LAST_CHECK_TIME, currentTime); // Save the current time as the last check time
+        } catch (Exception e) {
+            Log.e("CampusKey", "Sound error: " + e.getMessage());
         }
     }
 
+    // ── Firebase config fetch (once per day) ─────
+    private void checkAndFetchConfig() {
+        long lastCheck = data.getLong(LAST_CHECK_TIME);
+        long now = System.currentTimeMillis();
+        if (lastCheck + 86_400_000L < now) {
+            fetchConfigFromFirebase();
+            data.save(LAST_CHECK_TIME, now);
+        }
+    }
 
+    private void fetchConfigFromFirebase() {
+        databaseReference = FirebaseDatabase.getInstance().getReference("campuskey_config");
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snap) {
+                if (!snap.exists()) return;
+                saveIfNotNull(URL,          snap.child("URL").getValue(String.class));
+                saveIfNotNull(MAIN_TEXT,    snap.child("MAIN_TEXT").getValue(String.class));
+                saveIfNotNull(DESCRIPTION,  snap.child("DESCRIPTION").getValue(String.class));
+                Integer minVer = snap.child("MINIMUM_VERSION_CODE").getValue(Integer.class);
+                Boolean force  = snap.child("FORCE").getValue(Boolean.class);
+                if (minVer != null) data.save(MINIMUM_VERSION_CODE, minVer);
+                if (force  != null) data.save(FORCE, force);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w("CampusKey", "Config fetch cancelled: " + error.getMessage());
+            }
+        });
+    }
+
+    private void saveIfNotNull(String key, String value) {
+        if (value != null) data.save(key, value);
+    }
+
+    // ── Lifecycle ────────────────────────────────
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mediaPlayer != null) { mediaPlayer.release(); mediaPlayer = null; }
+        handler.removeCallbacksAndMessages(null);
+    }
 }

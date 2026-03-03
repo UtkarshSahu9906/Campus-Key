@@ -4,68 +4,52 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class LocalData {
-    static final String MAIN_TEXT = "7489927";
-    static final String DESCRIPTION = "6354773";
-    static final String URL = "864383";
-    static final String FORCE = "92747";
-    static final String MINIMUM_VERSION_CODE = "36656";
-    static final String LAST_CHECK_TIME= "67533";
-    static final String NETWORK_ERROR= "87464";
-    Context context;
+
+    // Keys
+    public static final String URL                  = "url";
+    public static final String MAIN_TEXT            = "main_text";
+    public static final String DESCRIPTION          = "description";
+    public static final String FORCE                = "force";
+    public static final String MINIMUM_VERSION_CODE = "minimum_version_code";
+    public static final String NETWORK_ERROR        = "network_error";
+    public static final String LAST_CHECK_TIME    = "last_check_time";
+    public static final String PROFILE_ASKED        = "profile_asked";
+
+    private final SharedPreferences prefs;
 
     public LocalData(Context context) {
-        this.context = context;
+        prefs = context.getSharedPreferences("CampusKeyPrefs", Context.MODE_PRIVATE);
     }
 
-    // Method to get a String from SharedPreferences
-    public String getString(String key) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        return sharedPreferences.getString(key, "Default Value");
-    }
-
-    // Method to get an int from SharedPreferences
-    public int getInt(String key) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        return sharedPreferences.getInt(key, -1);
-    }
-    public long getLong(String key) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        return sharedPreferences.getLong(key, -1);
-    }
-
-    // Method to save a String in SharedPreferences
     public void save(String key, String value) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(key, value);
-        editor.apply();
+        prefs.edit().putString(key, value).apply();
     }
 
-    // Method to save an int in SharedPreferences
-    public void save(String key, int value) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt(key, value);
-        editor.apply();
-    }
-
-    // Method to save a boolean in SharedPreferences
     public void save(String key, boolean value) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(key, value);
-        editor.apply();
+        prefs.edit().putBoolean(key, value).apply();
     }
 
-    // Method to get a boolean from SharedPreferences
-    public boolean getBoolean(String key) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        return sharedPreferences.getBoolean(key, false); // default is false if not found
+    public void save(String key, int value) {
+        prefs.edit().putInt(key, value).apply();
     }
+
     public void save(String key, long value) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("MyAppPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putLong(key, value);
-        editor.apply();
+        prefs.edit().putLong(key, value).apply();
+    }
+
+    public String getString(String key) {
+        return prefs.getString(key, "");
+    }
+
+    public boolean getBoolean(String key) {
+        return prefs.getBoolean(key, false);
+    }
+
+    public int getInt(String key) {
+        return prefs.getInt(key, 0);
+    }
+
+    public long getLong(String key) {
+        return prefs.getLong(key, 0L);
     }
 }
