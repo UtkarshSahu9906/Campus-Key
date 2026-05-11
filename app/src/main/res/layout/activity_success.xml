@@ -1,146 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#121212"
+    android:background="#0D1117"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="24dp">
 
+    <FrameLayout
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_marginBottom="24dp">
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/doneAnimation"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:visibility="gone"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="false"
-        app:lottie_rawRes="@raw/done_task" />
+        <View
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:background="@drawable/bg_icon_circle" />
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/networkErrorAnimation"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:visibility="gone"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="false"
-        app:lottie_rawRes="@raw/network_error" />
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/doneAnimation"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="false"
+            app:lottie_rawRes="@raw/done_task" />
 
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/networkErrorAnimation"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="false"
+            app:lottie_rawRes="@raw/network_error" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/connectionStatusMessage"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="@font/allerta_stencil"
-        android:gravity="center"
-        android:text="Successfully Logged In!"
-        android:textColor="@color/white"
-        android:textSize="24sp" />
-
-
-    <TextView
-        android:id="@+id/textViewLinks"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Follow us on:"
-        android:textColor="@color/white"
-        android:textSize="18sp" />
-
+        android:text="Login Status"
+        android:textColor="#E6EDF3"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="32dp" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:orientation="horizontal">
+        android:background="@drawable/bg_surface_card"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:layout_marginBottom="32dp">
 
-        <ImageView
-            android:id="@+id/imageViewInstagram"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:layout_marginEnd="18dp"
-            android:contentDescription="Instagram"
-            android:src="@drawable/instagram" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="STAY CONNECTED"
+            android:textColor="#8B949E"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.1"
+            android:layout_marginBottom="16dp" />
 
-        <ImageView
-            android:id="@+id/imageViewLinkedIn"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:contentDescription="LinkedIn"
-            android:src="@drawable/linkedin" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageViewInstagram"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="20dp"
+                android:background="@drawable/bg_icon_btn"
+                android:padding="12dp"
+                android:src="@drawable/instagram" />
+
+            <ImageView
+                android:id="@+id/imageViewLinkedIn"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_icon_btn"
+                android:padding="12dp"
+                android:src="@drawable/linkedin" />
+        </LinearLayout>
     </LinearLayout>
 
     <ImageView
         android:id="@+id/retry"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginTop="20dp"
-        app:tint="#FFFFFF"
-        android:visibility="gone"
-        app:srcCompat="@drawable/refresh" />
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_icon_btn"
+        android:padding="14dp"
+        android:src="@drawable/refresh"
+        app:tint="#E6EDF3"
+        android:visibility="gone" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <Button
         android:id="@+id/share"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp">
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardView"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:elevation="20dp"
-            android:layout_margin="10dp"
-            android:background="@drawable/share_btn_background"
-            app:cardCornerRadius="30dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/share_btn_background">
-
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:fontFamily="@font/aclonica"
-                    android:gravity="center"
-                    android:paddingLeft="35dp"
-                    android:text="Share"
-                    android:textColor="#FFFFFF"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            app:cardCornerRadius="50dp"
-            android:elevation="30dp"
-            android:layout_marginLeft="-5dp"
-            app:layout_constraintBottom_toBottomOf="@+id/cardView"
-            app:layout_constraintStart_toStartOf="@+id/cardView"
-            app:layout_constraintTop_toTopOf="@+id/cardView">
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:background="@drawable/share_btn_background"
-                android:padding="7dp"
-                app:srcCompat="@drawable/baseline_share_24" />
-        </androidx.cardview.widget.CardView>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="@drawable/btn_indigo"
+        android:text="Share App"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:elevation="0dp"
+        android:stateListAnimator="@null" />
 
 </LinearLayout>

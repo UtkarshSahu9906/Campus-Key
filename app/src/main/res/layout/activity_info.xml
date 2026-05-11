@@ -4,45 +4,66 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1D1D1D"
+    android:background="#0D1117"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="40dp">
 
-        <ImageView
-            android:id="@+id/backgroundImage"
+        <!-- Background Image / Header Area -->
+        <View
+            android:id="@+id/headerBg"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:scaleType="centerCrop"
+            android:layout_height="220dp"
+            android:background="@drawable/bg_dark"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/profileImage"
+        <!-- Profile Ring -->
+        <FrameLayout
+            android:id="@+id/profileContainer"
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:layout_marginBottom="32dp"
-            android:padding="4dp"
-            app:layout_constraintBottom_toBottomOf="@+id/backgroundImage"
+            app:layout_constraintBottom_toBottomOf="@+id/headerBg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearanceOverlay="@style/CircleImage"
-            app:strokeColor="@android:color/white"
-            app:strokeWidth="2dp" />
+            app:layout_constraintTop_toBottomOf="@+id/headerBg">
 
+            <View
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:background="@drawable/bg_icon_circle" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                app:cardCornerRadius="50dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="#21262D">
+                <ImageView
+                    android:id="@+id/profileImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/man" />
+            </androidx.cardview.widget.CardView>
+        </FrameLayout>
+
+        <!-- Name & Bio -->
         <TextView
             android:id="@+id/userName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:text="Utkarsh Sahu"
-            android:textColor="@android:color/white"
-            android:textSize="28sp"
+            android:textColor="#E6EDF3"
+            android:textSize="26sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/profileContainer" />
 
         <TextView
             android:id="@+id/userBio"
@@ -51,84 +72,82 @@
             android:layout_marginHorizontal="40dp"
             android:layout_marginTop="8dp"
             android:gravity="center"
-            android:text="Computer Science student aspiring app developer.Building tools for connection learning."
-            android:textColor="#D1D1D1"
-            android:textSize="16sp"
+            android:text="Computer Science student &amp; App Developer. Building tools for a better campus experience."
+            android:textColor="#8B949E"
+            android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/userName" />
 
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            app:cardBackgroundColor="@android:color/white"
-            app:cardCornerRadius="32dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/userBio">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
-                android:padding="24dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/rounded_badge"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="4dp"
-                    android:text="SPECIAL THANKS"
-                    android:textColor="#B8860B"
-                    android:textStyle="bold" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/thanksRecyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="16dp"
-                    android:orientation="horizontal"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:itemCount="10"
-                    tools:listitem="@layout/item_thanks" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:gravity="center"
-                    android:text="For promoting 'CampusConnect' at Delhi Tech University!"
-                    android:textColor="#555555" />
-
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
+        <!-- Social Icons Row -->
         <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="0dp"
-            android:layout_height="23dp"
-            android:gravity="center"
+            android:id="@+id/socialRow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="@+id/profileImage"
-            app:layout_constraintStart_toStartOf="@+id/profileImage"
-            app:layout_constraintTop_toBottomOf="@+id/profileImage">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/userBio">
 
             <ImageView
                 android:id="@+id/imageView"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginRight="5dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_marginEnd="12dp"
+                android:background="@drawable/bg_icon_btn"
+                android:padding="9dp"
                 android:src="@drawable/instagram" />
 
             <ImageView
                 android:id="@+id/imageView3"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginLeft="5dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/bg_icon_btn"
+                android:padding="9dp"
                 android:src="@drawable/linkedin" />
+        </LinearLayout>
+
+        <!-- Special Thanks Section -->
+        <LinearLayout
+            android:id="@+id/thanksSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:layout_marginHorizontal="20dp"
+            android:background="@drawable/bg_surface_card"
+            android:orientation="vertical"
+            android:padding="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/socialRow">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SPECIAL THANKS"
+                android:textColor="#D29922"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.2"
+                android:layout_marginBottom="16dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/thanksRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="200dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_thanks" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center"
+                android:text="For promoting CampusKey and supporting the developer community."
+                android:textColor="#8B949E"
+                android:textSize="12sp" />
+
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

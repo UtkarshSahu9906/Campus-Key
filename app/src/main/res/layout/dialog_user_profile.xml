@@ -1,82 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/layout/dialog_user_profile.xml -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="24dp"
-    android:background="@drawable/dialog_bg">
+    android:background="#161B22">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Quick Setup (Optional)"
-        android:textSize="18sp"
+        android:text="Quick Setup"
+        android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="#1A1A2E"
+        android:textColor="#E6EDF3"
         android:layout_marginBottom="6dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Help us understand who uses CampusKey. This is completely optional."
+        android:text="Optional: Help us understand our users. This data stays private."
         android:textSize="13sp"
-        android:textColor="#6B7280"
-        android:layout_marginBottom="20dp"/>
+        android:textColor="#8B949E"
+        android:layout_marginBottom="24dp"/>
 
-    <com.google.android.material.textfield.TextInputLayout
+    <EditText
+        android:id="@+id/etName"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="52dp"
         android:hint="Your Name"
-        android:layout_marginBottom="16dp"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"/>
-    </com.google.android.material.textfield.TextInputLayout>
+        android:inputType="textPersonName"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="@drawable/bg_surface_card"
+        android:textColor="#E6EDF3"
+        android:textColorHint="#484F58"
+        android:textSize="15sp"
+        android:layout_marginBottom="16dp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Gender"
         android:textSize="12sp"
-        android:textColor="#6B7280"
-        android:layout_marginBottom="6dp"/>
+        android:textColor="#8B949E"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="4dp"/>
 
     <Spinner
         android:id="@+id/spinnerGender"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:background="@drawable/spinner_bg"
-        android:layout_marginBottom="24dp"
-        android:padding="8dp"/>
+        android:layout_height="52dp"
+        android:background="@drawable/bg_surface_card"
+        android:layout_marginBottom="28dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnSkip"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="52dp"
             android:layout_weight="1"
-            android:text="Skip"
             android:layout_marginEnd="8dp"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+            android:background="@drawable/btn_secondary"
+            android:text="Skip"
+            android:textAllCaps="false"
+            android:textColor="#8B949E"
+            android:textSize="14sp"
+            android:elevation="0dp"
+            android:stateListAnimator="@null" />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnSave"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="52dp"
             android:layout_weight="1"
+            android:background="@drawable/btn_indigo"
             android:text="Save"
-            android:backgroundTint="#4F46E5"
-            style="@style/Widget.MaterialComponents.Button"/>
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:elevation="0dp"
+            android:stateListAnimator="@null" />
     </LinearLayout>
 
 </LinearLayout>
