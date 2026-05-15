@@ -67,10 +67,10 @@ public class SuccessActivity extends AppCompatActivity {
         binding.connectionStatusMessage.setText("Connected to college Wi-Fi!");
         playSound(R.raw.done_sound);
 
-        // Auto-close after 3 seconds if user isn't tapping anything
+        // Auto-close after 1 second if user isn't tapping anything
         handler.postDelayed(() -> {
             if (!userIsEngaged) finishAffinity();
-        }, 3000);
+        }, 1000);
     }
 
     private void showErrorState() {

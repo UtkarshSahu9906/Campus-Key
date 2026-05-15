@@ -36,18 +36,25 @@ public class ThanksAdapter extends RecyclerView.Adapter<ThanksAdapter.ViewHolder
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ThanksMember member = thanksList.get(position);
         holder.nameTv.setText(member.getName());
+        holder.tagTv.setText(member.getTagText());
 
         // Load image from URL using Glide
         Glide.with(context)
                 .load(member.getImageUrl())
-                .placeholder(R.drawable.btn_cancel_background) // Add a default image in drawable
+                .placeholder(R.drawable.man) // Add a default image in drawable
                 .into(holder.profileImg);
 
         // Open the "Another URL" when the item is clicked
-        holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(member.getSocialUrl()));
-            context.startActivity(intent);
-        });
+        if (member.getSocialUrl() != null && !member.getSocialUrl().isEmpty()) {
+            holder.itemView.setOnClickListener(v -> {
+                try {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(member.getSocialUrl()));
+                    context.startActivity(intent);
+                } catch (Exception e) {}
+            });
+        } else {
+            holder.itemView.setOnClickListener(null);
+        }
     }
 
     @Override
@@ -58,11 +65,13 @@ public class ThanksAdapter extends RecyclerView.Adapter<ThanksAdapter.ViewHolder
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView profileImg;
         TextView nameTv;
+        TextView tagTv;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             profileImg = itemView.findViewById(R.id.imgPromoter);
             nameTv = itemView.findViewById(R.id.tvPromoterName);
+            tagTv = itemView.findViewById(R.id.tvInstagramTag);
         }
     }
 }

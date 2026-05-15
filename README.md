@@ -22,10 +22,12 @@
 ## ✨ Features
 
 - **🔄 Auto Login** — Detects college Wi-Fi and logs in silently in the background
-- **🔔 Boot on Startup** — Service starts automatically when your phone boots
+- **👥 Community Wall** — Real-time feedback and highlights from the CampusKey community
+- **🛠️ Pro Diagnostics** — Built-in tool to troubleshoot and verify portal connectivity
 - **📊 Live Stats** — Real-time Firebase dashboard showing total users, today's logins, all-time count
+- **🔄 Always-Connected** — Enhanced background monitoring to maintain stable connectivity
 - **👤 Developer Profile** — Updated live from Firebase, no app update needed
-- **📱 User Guide** — 6-slide onboarding shown on first launch
+- **📱 User Guide** — Sleek dark-themed onboarding experience
 - **⚡ Force Update** — Admin can push required updates remotely via Firebase
 - **🔕 Push Notifications** — Admin can broadcast messages to all users via FCM
 - **🛡️ Admin Panel** — Web-based dashboard to manage everything

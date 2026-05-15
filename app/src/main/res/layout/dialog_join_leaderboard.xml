@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="#161B22">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Join Leaderboard"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#E6EDF3"
+        android:layout_marginBottom="6dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Top users will be featured in Special Thanks!"
+        android:textSize="13sp"
+        android:textColor="#8B949E"
+        android:layout_marginBottom="24dp"/>
+
+    <EditText
+        android:id="@+id/etLeaderboardName"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:hint="Display Name (Required)"
+        android:inputType="textPersonName"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="@drawable/bg_surface_card"
+        android:textColor="#E6EDF3"
+        android:textColorHint="#484F58"
+        android:textSize="14sp"
+        android:layout_marginBottom="12dp" />
+
+    <EditText
+        android:id="@+id/etLeaderboardInstagram"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:hint="Instagram Username or Link (Required)"
+        android:inputType="textUri"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="@drawable/bg_surface_card"
+        android:textColor="#E6EDF3"
+        android:textColorHint="#484F58"
+        android:textSize="14sp"
+        android:layout_marginBottom="12dp" />
+
+    <EditText
+        android:id="@+id/etLeaderboardPic"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:hint="Profile Pic URL (Optional)"
+        android:inputType="textUri"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="@drawable/bg_surface_card"
+        android:textColor="#E6EDF3"
+        android:textColorHint="#484F58"
+        android:textSize="14sp"
+        android:layout_marginBottom="24dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCancelJoin"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/btn_secondary"
+            android:text="Cancel"
+            android:textAllCaps="false"
+            android:textColor="#8B949E"
+            android:textSize="14sp"
+            android:elevation="0dp"
+            android:stateListAnimator="@null" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSaveJoin"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_indigo"
+            android:text="Save"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:elevation="0dp"
+            android:stateListAnimator="@null" />
+    </LinearLayout>
+
+</LinearLayout>

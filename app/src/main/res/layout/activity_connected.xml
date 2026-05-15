@@ -10,6 +10,20 @@
     android:paddingTop="52dp"
     android:paddingBottom="24dp">
 
+    <!-- ── TOP PROGRESS BAR ────────────────────────────── -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ProgressBar
+            android:id="@+id/topProgressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:indeterminate="true"
+            android:indeterminateTint="#58A6FF"
+            android:visibility="gone" />
+    </FrameLayout>
+
     <!-- ── TOP BAR ────────────────────────────────────────── -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -59,6 +73,17 @@
                 android:textColor="#8B949E"
                 android:textSize="11sp" />
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/btnTopInfo"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginStart="12dp"
+            android:padding="2dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:src="@drawable/ic_info" />
     </LinearLayout>
 
     <!-- ── SUCCESS SECTION (center, takes remaining space) ── -->
@@ -96,6 +121,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="6dp"
             android:text="Connected!"
+            android:gravity="center"
             android:textColor="#E6EDF3"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -104,41 +130,51 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Campus Wi-Fi access granted"
+            android:gravity="center"
             android:textColor="#8B949E"
             android:textSize="13sp" />
     </LinearLayout>
 
-    <!-- ── STATS CARD ─────────────────────────────────────── -->
+    <!-- ── STATS DASHBOARD ─────────────────────────────────── -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="16dp"
         android:background="@drawable/bg_surface_card"
         android:orientation="vertical"
-        android:padding="18dp">
+        android:padding="20dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="14dp"
-            android:text="APP STATS"
+            android:layout_marginBottom="20dp"
+            android:letterSpacing="0.1"
+            android:text="NETWORK INSIGHTS"
             android:textColor="#8B949E"
             android:textSize="10sp"
-            android:textStyle="bold"
-            android:letterSpacing="0.15" />
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:weightSum="3">
+            android:orientation="horizontal">
 
+            <!-- Unique Users Tile -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginBottom="8dp"
+                    android:padding="4dp"
+                    android:src="@drawable/people"
+                    app:tint="#58A6FF" />
+
                 <TextView
                     android:id="@+id/tvUniqueUsers"
                     android:layout_width="wrap_content"
@@ -147,27 +183,38 @@
                     android:textColor="#E6EDF3"
                     android:textSize="20sp"
                     android:textStyle="bold" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
                     android:text="Users"
                     android:textColor="#8B949E"
-                    android:textSize="11sp" />
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <View
                 android:layout_width="1dp"
-                android:layout_height="36dp"
+                android:layout_height="40dp"
                 android:layout_gravity="center_vertical"
                 android:background="#30363D" />
 
+            <!-- Today's Logins Tile -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginBottom="8dp"
+                    android:padding="4dp"
+                    android:src="@drawable/refresh"
+                    app:tint="#58A6FF" />
+
                 <TextView
                     android:id="@+id/tvTodayCount"
                     android:layout_width="wrap_content"
@@ -176,27 +223,37 @@
                     android:textColor="#E6EDF3"
                     android:textSize="20sp"
                     android:textStyle="bold" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
                     android:text="Today"
                     android:textColor="#8B949E"
-                    android:textSize="11sp" />
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <View
                 android:layout_width="1dp"
-                android:layout_height="36dp"
+                android:layout_height="40dp"
                 android:layout_gravity="center_vertical"
                 android:background="#30363D" />
 
+            <!-- Total Launches Tile -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginBottom="8dp"
+                    android:padding="4dp"
+                    android:src="@mipmap/ic_launcher" />
+
                 <TextView
                     android:id="@+id/tvTotalLaunches"
                     android:layout_width="wrap_content"
@@ -205,26 +262,31 @@
                     android:textColor="#E6EDF3"
                     android:textSize="20sp"
                     android:textStyle="bold" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
                     android:text="Total"
                     android:textColor="#8B949E"
-                    android:textSize="11sp" />
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
     <!-- ── DEVELOPER CARD ─────────────────────────────────── -->
     <LinearLayout
+        android:id="@+id/devProfileRow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
         android:background="@drawable/bg_surface_card"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground">
 
         <androidx.cardview.widget.CardView
             android:layout_width="44dp"

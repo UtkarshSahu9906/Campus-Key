@@ -8,6 +8,8 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
 
     <application
         android:allowBackup="true"
@@ -34,8 +36,15 @@
             android:screenOrientation="portrait" />
         <!--  Onboarding guide  -->
         <activity
-            android:name=".UserGuideActivity"
-            android:exported="false" />
+            android:name=".AllFeedbacksActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.WifiPasswordFillUp" />
+            
+        <activity
+            android:name=".DownloadAppActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <!--  Other existing activities  -->
         <activity
             android:name=".SuccessActivity"
@@ -52,6 +61,13 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+        <!--  Auto Login Service  -->
+        <service
+            android:name=".AutoLoginService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="connectedDevice" />
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />

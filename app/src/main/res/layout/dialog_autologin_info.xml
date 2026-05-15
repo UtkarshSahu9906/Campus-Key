@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_surface_card"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Auto-Login Info"
+        android:textColor="#E6EDF3"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="When enabled, CampusKey monitors your Wi-Fi connection in the background. It will automatically log you in as soon as it detects the college network."
+        android:textColor="#8B949E"
+        android:textSize="14sp"
+        android:lineSpacingExtra="4dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="KEY FEATURES"
+        android:textColor="#58A6FF"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        android:letterSpacing="0.2" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="• Instant Detection: No need to open the app manually.\n• Battery Efficient: Uses system callbacks for minimal drain.\n• Background Sync: Keeps your community ranking updated automatically."
+        android:textColor="#E6EDF3"
+        android:textSize="13sp"
+        android:lineSpacingExtra="6dp" />
+
+    <TextView
+        android:id="@+id/btnDismissAutoLoginInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="24dp"
+        android:padding="12dp"
+        android:text="Got it, thanks!"
+        android:textColor="#58A6FF"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?attr/selectableItemBackground" />
+
+</LinearLayout>

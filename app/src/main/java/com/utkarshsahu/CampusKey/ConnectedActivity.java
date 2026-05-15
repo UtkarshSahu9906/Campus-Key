@@ -45,6 +45,7 @@ public class ConnectedActivity extends AppCompatActivity {
 
     private boolean userIsEngaged = false;
     private final Handler handler = new Handler(Looper.getMainLooper());
+    private WifiLoginHelper wifiLoginHelper;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -56,7 +57,8 @@ public class ConnectedActivity extends AppCompatActivity {
         setupButtons();
         loadRealtimeData();
         applyAnimations();
-        autoCloseAfter(6000);
+        autoCloseAfter(1000);
+        setupWifiLoginHelper();
     }
 
     private void applyAnimations() {
@@ -69,17 +71,17 @@ public class ConnectedActivity extends AppCompatActivity {
             findViewById(R.id.doneAnimation).startAnimation(scaleBounce);
             
             // Stats Card
-            slideUp.setStartOffset(300);
+            slideUp.setStartOffset(100);
             ((View) findViewById(R.id.tvUniqueUsers).getParent().getParent()).startAnimation(slideUp);
             
             // Dev Card
             android.view.animation.Animation slideUp2 = android.view.animation.AnimationUtils.loadAnimation(this, R.anim.slide_fade_in);
-            slideUp2.setStartOffset(600);
+            slideUp2.setStartOffset(200);
             ((View) findViewById(R.id.imgDev).getParent().getParent()).startAnimation(slideUp2);
             
             // Action Buttons
             android.view.animation.Animation slideUp3 = android.view.animation.AnimationUtils.loadAnimation(this, R.anim.slide_fade_in);
-            slideUp3.setStartOffset(900);
+            slideUp3.setStartOffset(300);
             ((View) findViewById(R.id.shareC).getParent()).startAnimation(slideUp3);
         });
     }
@@ -105,9 +107,9 @@ public class ConnectedActivity extends AppCompatActivity {
                 Long total   = snap.child("campuskey/summary/totalAllTimeLaunches").getValue(Long.class);
                 Long todayCt = snap.child("campuskey/daily/" + TODAY + "/totalOpens").getValue(Long.class);
 
-                setText(R.id.tvUniqueUsers,   fmt(users)   + " users");
-                setText(R.id.tvTodayCount,    fmt(todayCt) + " today");
-                setText(R.id.tvTotalLaunches, fmt(total)   + " total");
+                setText(R.id.tvUniqueUsers,   fmt(users));
+                setText(R.id.tvTodayCount,    fmt(todayCt));
+                setText(R.id.tvTotalLaunches, fmt(total));
             }
             @Override public void onCancelled(@NonNull DatabaseError e) {
                 Log.w(TAG, "Stats error: " + e.getMessage());
@@ -217,6 +219,12 @@ public class ConnectedActivity extends AppCompatActivity {
         // Developer Card Click
         View devCard = findViewById(R.id.imgDev);
         if (devCard != null) devCard.setOnClickListener(v -> startActivity(new Intent(this, Info.class)));
+
+        // Top Info Button
+        View infoBtn = findViewById(R.id.btnTopInfo);
+        if (infoBtn != null) {
+            infoBtn.setOnClickListener(v -> startActivity(new Intent(this, Info.class)));
+        }
     }
 
     private void showEditCredentialsDialog() {
@@ -266,6 +274,76 @@ public class ConnectedActivity extends AppCompatActivity {
         handler.postDelayed(() -> {
             if (!userIsEngaged && !isFinishing()) finishAffinity();
         }, ms);
+        
+        // Start periodic session check (Auto-Refresher)
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (isFinishing()) return;
+                checkSessionStatus();
+                handler.postDelayed(this, 30000); // Check every 30 seconds
+            }
+        }, 30000);
+    }
+
+    private void checkSessionStatus() {
+        new Thread(() -> {
+            boolean hasInternet = false;
+            try {
+                java.net.HttpURLConnection c = (java.net.HttpURLConnection) 
+                    new java.net.URL("http://www.gstatic.com/generate_204").openConnection();
+                c.setConnectTimeout(3000);
+                c.setReadTimeout(3000);
+                c.connect();
+                hasInternet = (c.getResponseCode() == 204);
+                c.disconnect();
+            } catch (Exception ignored) {}
+
+            final boolean active = hasInternet;
+            runOnUiThread(() -> {
+                TextView tvStatus = findViewById(R.id.tvConnectionStatus);
+                if (tvStatus != null) {
+                    if (active) {
+                        tvStatus.setText("Connected & Active! ✅");
+                        tvStatus.setTextColor(getResources().getColor(android.R.color.white));
+                    } else {
+                        tvStatus.setText("Session Expired ● Reconnecting...");
+                        tvStatus.setTextColor(getResources().getColor(android.R.color.holo_orange_light));
+                        triggerAutoRelogin();
+                    }
+                }
+            });
+        }).start();
+    }
+
+    private void setupWifiLoginHelper() {
+        wifiLoginHelper = new WifiLoginHelper(this, new WifiLoginHelper.WifiLoginListener() {
+            @Override public void onStatusUpdate(String status) { Log.d(TAG, "Auto-Refresh: " + status); }
+            @Override public void onSuccess() {
+                runOnUiThread(() -> {
+                    TextView tvStatus = findViewById(R.id.tvConnectionStatus);
+                    if (tvStatus != null) {
+                        tvStatus.setText("Connected & Active! ✅");
+                        tvStatus.setTextColor(getResources().getColor(android.R.color.white));
+                    }
+                    Toast.makeText(ConnectedActivity.this, "Session Refreshed! ⚡", Toast.LENGTH_SHORT).show();
+                });
+            }
+            @Override public void onFailed(String reason) {
+                Log.w(TAG, "Auto-Refresh failed: " + reason);
+            }
+        });
+    }
+
+    private void triggerAutoRelogin() {
+        DatabaseHelper db = new DatabaseHelper(this);
+        Cursor cursor = db.getUser();
+        if (cursor.moveToFirst()) {
+            String uname = cursor.getString(cursor.getColumnIndexOrThrow("username"));
+            String pass = cursor.getString(cursor.getColumnIndexOrThrow("password"));
+            wifiLoginHelper.startLogin(uname, pass);
+        }
+        cursor.close();
     }
 
 
@@ -273,6 +351,7 @@ public class ConnectedActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         handler.removeCallbacksAndMessages(null);
+        if (wifiLoginHelper != null) wifiLoginHelper.destroyWebView();
         if (dbRef != null) {
             if (statsListener   != null) dbRef.removeEventListener(statsListener);
             if (profileListener != null) dbRef.child("campuskey_config/developer")

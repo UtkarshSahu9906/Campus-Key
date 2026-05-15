@@ -51,7 +51,9 @@ public class AnalyticsHelper {
           .setValue(ServerValue.increment(1));
 
         // Update user node
-        userRef.child("totalLaunches").setValue(ServerValue.increment(1));
+        userRef.child("totalLaunches").setValue(ServerValue.increment(1))
+            .addOnFailureListener(e -> Log.e(TAG, "Failed to increment launches: " + e.getMessage()));
+            
         userRef.child("lastSeen").setValue(now);
 
         // Set firstSeen only if not already set
@@ -62,9 +64,9 @@ public class AnalyticsHelper {
                 db.child("campuskey/summary/totalUniqueUsers")
                   .setValue(ServerValue.increment(1));
             }
-        });
+        }).addOnFailureListener(e -> Log.e(TAG, "Failed to check firstSeen: " + e.getMessage()));
 
-        Log.d(TAG, "Launch recorded for device: " + deviceId);
+        Log.d(TAG, "Launch recording triggered for device: " + deviceId);
     }
 
     /**
@@ -79,5 +81,31 @@ public class AnalyticsHelper {
 
         db.child("campuskey/users/" + deviceId).updateChildren(data);
         Log.d(TAG, "Profile saved: " + name + " | " + gender);
+    }
+
+    public void saveLeaderboardProfile(String name, String instagram, String picUrl) {
+        if (name == null || name.trim().isEmpty()) return;
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("name", name.trim());
+        data.put("optInLeaderboard", true);
+        
+        if (instagram != null && !instagram.trim().isEmpty()) {
+            data.put("instagram", instagram.trim());
+        }
+        if (picUrl != null && !picUrl.trim().isEmpty()) {
+            data.put("picUrl", picUrl.trim());
+        }
+        
+        // This ensures they are indexed immediately with at least 0 connects
+        db.child("campuskey/users/" + deviceId).child("totalLaunches").get().addOnSuccessListener(snap -> {
+            if (!snap.exists()) {
+                db.child("campuskey/users/" + deviceId).child("totalLaunches").setValue(0);
+            }
+        }).addOnFailureListener(e -> Log.e(TAG, "Failed to check totalLaunches: " + e.getMessage()));
+
+        db.child("campuskey/users/" + deviceId).updateChildren(data)
+            .addOnSuccessListener(aVoid -> Log.d(TAG, "Leaderboard profile saved successfully: " + name))
+            .addOnFailureListener(e -> Log.e(TAG, "Leaderboard save FAILED: " + e.getMessage()));
     }
 }

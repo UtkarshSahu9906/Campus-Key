@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceError;
@@ -38,6 +39,7 @@ public class WifiLoginHelper {
     private boolean pageLoaded = false;
     private boolean loginDone = false;
     private boolean loginSuccess = false;
+    private boolean connecting = false;
 
     public WifiLoginHelper(Context context, WifiLoginListener listener) {
         this.context = context;
@@ -45,11 +47,20 @@ public class WifiLoginHelper {
     }
 
     public void startLogin(final String username, final String password) {
-        if (loginDone) return;
+        if (connecting) {
+            Log.d(TAG, "Login already in progress, skipping.");
+            return;
+        }
+        
+        if (!isWifiConnected()) {
+            mainHandler.post(() -> listener.onFailed("Wi-Fi is not connected. Please turn on Wi-Fi."));
+            return;
+        }
         
         loginDone = false;
         loginSuccess = false;
         pageLoaded = false;
+        connecting = true;
 
         mainHandler.post(() -> {
             listener.onStatusUpdate("Initializing portal...");
@@ -58,7 +69,8 @@ public class WifiLoginHelper {
             CookieManager.getInstance().removeAllCookies(null);
             CookieManager.getInstance().flush();
 
-            loginWebView = new WebView(context);
+            // Background login: Use application context to avoid leaks/crashes
+            loginWebView = new WebView(context.getApplicationContext());
             WebSettings ws = loginWebView.getSettings();
             ws.setJavaScriptEnabled(true);
             ws.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
@@ -67,6 +79,9 @@ public class WifiLoginHelper {
             ws.setUserAgentString(
                 "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 " +
                 "(KHTML, like Gecko) Chrome/120.0.6099.210 Mobile Safari/537.36");
+
+            // Avoid renderer crashes in background: Use software layer or none
+            loginWebView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
 
             loginWebView.addJavascriptInterface(new JsBridge(), "CKBridge");
 
@@ -78,9 +93,8 @@ public class WifiLoginHelper {
                     if (!pageLoaded) {
                         pageLoaded = true;
                         listener.onStatusUpdate("Injecting credentials...");
-                        mainHandler.postDelayed(() -> {
-                            if (!loginDone) injectCredentials(view, username, password);
-                        }, 500);
+                        // Speed: Instant injection without artificial delay
+                        injectCredentials(view, username, password);
                     }
                 }
 
@@ -94,21 +108,22 @@ public class WifiLoginHelper {
                         mainHandler.postDelayed(() -> {
                             if (!loginDone && loginWebView != null)
                                 loginWebView.loadUrl(PORTAL_URL);
-                        }, 4000);
+                        }, 2500);
                     }
                 }
             });
 
             loginWebView.loadUrl(PORTAL_URL);
 
-            // Timeout check
+            // Timeout check (reduced from 10s to 7s)
             mainHandler.postDelayed(() -> {
                 if (!loginDone) {
                     loginDone = true;
+                    connecting = false;
                     listener.onStatusUpdate("Checking internet...");
                     executor.execute(WifiLoginHelper.this::checkInternetAndFinish);
                 }
-            }, 12000);
+            }, 7000);
         });
     }
 
@@ -118,6 +133,8 @@ public class WifiLoginHelper {
 
         String js =
             "(function(){" +
+                "if(window._ck_injected)return;" +
+                "window._ck_injected=true;" +
                 "var oO=XMLHttpRequest.prototype.open,oS=XMLHttpRequest.prototype.send;" +
                 "XMLHttpRequest.prototype.open=function(m,u){this._m=m;this._u=u;return oO.apply(this,arguments);};" +
                 "XMLHttpRequest.prototype.send=function(b){" +
@@ -127,24 +144,33 @@ public class WifiLoginHelper {
                     "});" +
                     "return oS.apply(this,arguments);" +
                 "};" +
-            "})();" +
-            "(function(){" +
-                "var u=document.getElementById('username');" +
-                "var pw=document.getElementById('password');" +
-                "var btn=document.getElementById('loginbutton');" +
-                "if(!u||!pw){CKBridge.onLog('NO_FIELDS');return;}" +
-                "u.value='" + u + "';" +
-                "pw.value='" + p + "';" +
-                "['focus','input','change','blur'].forEach(function(ev){" +
-                    "u.dispatchEvent(new Event(ev,{bubbles:true}));" +
-                    "pw.dispatchEvent(new Event(ev,{bubbles:true}));" +
-                "});" +
-                "setTimeout(function(){" +
-                    "if(btn){btn.click();}else{var f=document.querySelector('form');if(f)f.submit();}" +
-                "},300);" +
+                "function attempt(){" +
+                "  var uField=document.getElementById('username');" +
+                "  var pField=document.getElementById('password');" +
+                "  var btn=document.getElementById('loginbutton');" +
+                "  if(uField && pField){" +
+                "    uField.value='" + u + "';" +
+                "    pField.value='" + p + "';" +
+                "    ['input','change','blur'].forEach(function(ev){" +
+                "      uField.dispatchEvent(new Event(ev,{bubbles:true}));" +
+                "      pField.dispatchEvent(new Event(ev,{bubbles:true}));" +
+                "    });" +
+                "    setTimeout(function(){" +
+                "      if(btn){btn.click();}else{var f=document.querySelector('form');if(f)f.submit();}" +
+                "    },50);" +
+                "    return true;" +
+                "  }" +
+                "  return false;" +
+                "}" +
+                "if(!attempt()){" +
+                "  var itv=setInterval(function(){ if(attempt()) clearInterval(itv); }, 50);" +
+                "  setTimeout(function(){ clearInterval(itv); }, 5000);" +
+                "}" +
             "})();";
 
-        view.evaluateJavascript(js, r -> Log.d(TAG, "JS Injection result: " + r));
+        if (view != null) {
+            view.evaluateJavascript(js, r -> Log.d(TAG, "JS Injection result: " + r));
+        }
     }
 
     private class JsBridge {
@@ -164,40 +190,62 @@ public class WifiLoginHelper {
                 mainHandler.post(() -> {
                     if (!loginDone) {
                         loginDone = true; loginSuccess = true;
+                        connecting = false;
                         listener.onStatusUpdate("Verifying connection...");
                         executor.execute(WifiLoginHelper.this::checkInternetAndFinish);
                     }
                 });
             } else if (fail) {
                 mainHandler.post(() -> {
-                    if (!loginDone) { loginDone = true; listener.onFailed("Invalid credentials."); }
+                    if (!loginDone) { 
+                        loginDone = true; 
+                        connecting = false;
+                        listener.onFailed("Invalid credentials."); 
+                    }
                 });
             }
         }
     }
 
     private void checkInternetAndFinish() {
+        if (!isWifiConnected()) {
+            mainHandler.post(() -> {
+                connecting = false;
+                listener.onFailed("Wi-Fi is not connected.");
+            });
+            return;
+        }
+
         String[] urls = {
-            "http://kalingauniversity.ac.in",
             "http://www.gstatic.com/generate_204",
+            "http://kalingauniversity.ac.in",
             "http://www.google.com"
         };
         for (String urlStr : urls) {
             try {
                 HttpURLConnection c = (HttpURLConnection) new URL(urlStr).openConnection();
-                c.setConnectTimeout(5000);
-                c.setReadTimeout(5000);
+                c.setConnectTimeout(2500);
+                c.setReadTimeout(2500);
                 c.setRequestMethod("HEAD");
                 int code = c.getResponseCode();
                 c.disconnect();
                 if (code >= 200 && code < 500) {
-                    mainHandler.post(listener::onSuccess);
+                    mainHandler.post(() -> {
+                        connecting = false;
+                        listener.onSuccess();
+                    });
                     return;
                 }
             } catch (IOException ignored) {}
         }
-        if (loginSuccess) mainHandler.post(listener::onSuccess);
-        else              mainHandler.post(() -> listener.onFailed("No internet connection."));
+        mainHandler.post(() -> {
+            connecting = false;
+            if (loginSuccess) {
+                listener.onSuccess();
+            } else {
+                listener.onFailed("No internet connection.");
+            }
+        });
     }
 
     public void destroyWebView() {
@@ -209,8 +257,34 @@ public class WifiLoginHelper {
         }
     }
 
+    public void cancelLogin() {
+        connecting = false;
+        loginDone = true;
+        mainHandler.removeCallbacksAndMessages(null);
+        destroyWebView();
+    }
+
     private static String escapejs(String s) {
         if (s == null) return "";
         return s.replace("\\","\\\\").replace("'","\\'").replace("\n","").replace("\r","");
+    }
+
+    private boolean isWifiConnected() {
+        android.net.ConnectivityManager cm = (android.net.ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm != null) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                for (android.net.Network network : cm.getAllNetworks()) {
+                    android.net.NetworkCapabilities capabilities = cm.getNetworkCapabilities(network);
+                    if (capabilities != null && capabilities.hasTransport(android.net.NetworkCapabilities.TRANSPORT_WIFI)) {
+                        return true;
+                    }
+                }
+                return false;
+            } else {
+                android.net.NetworkInfo wifiInfo = cm.getNetworkInfo(android.net.ConnectivityManager.TYPE_WIFI);
+                return wifiInfo != null && wifiInfo.isConnected();
+            }
+        }
+        return false;
     }
 }

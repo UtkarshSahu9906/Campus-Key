@@ -12,6 +12,17 @@
         android:layout_height="wrap_content"
         android:paddingBottom="40dp">
 
+        <!-- ── TOP PROGRESS BAR ────────────────────────────── -->
+        <ProgressBar
+            android:id="@+id/topProgressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            app:layout_constraintTop_toTopOf="parent"
+            android:indeterminate="true"
+            android:indeterminateTint="#58A6FF"
+            android:visibility="gone" />
+
         <!-- Background Image / Header Area -->
         <View
             android:id="@+id/headerBg"
@@ -72,7 +83,7 @@
             android:layout_marginHorizontal="40dp"
             android:layout_marginTop="8dp"
             android:gravity="center"
-            android:text="Computer Science student &amp; App Developer. Building tools for a better campus experience."
+            android:text="MCA Student at Kalinga University &amp; App Developer. Building tools for a better campus experience."
             android:textColor="#8B949E"
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -107,23 +118,215 @@
                 android:padding="9dp"
                 android:src="@drawable/linkedin" />
         </LinearLayout>
-
-        <!-- Special Thanks Section -->
+ 
+        <!-- Our Mission Card -->
         <LinearLayout
-            android:id="@+id/thanksSection"
+            android:id="@+id/missionCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="24dp"
             android:layout_marginHorizontal="20dp"
             android:background="@drawable/bg_surface_card"
             android:orientation="vertical"
             android:padding="20dp"
             app:layout_constraintTop_toBottomOf="@+id/socialRow">
+ 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OUR MISSION"
+                android:textColor="#238636"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.2"
+                android:layout_marginBottom="12dp" />
+ 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="CampusKey was born out of a simple frustration: the daily struggle of manually logging into the Kalinga University Wi-Fi. Tired of repeatedly typing the same credentials every time I moved between buildings, I built this solution to automate the process and make life easier for every student."
+                android:textColor="#E6EDF3"
+                android:textSize="14sp"
+                android:justificationMode="inter_word"
+                tools:targetApi="o"
+                android:lineSpacingExtra="4dp" />
+ 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#30363D"
+                android:layout_marginVertical="16dp" />
+ 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PRIVACY FIRST"
+                android:textColor="#1F6FEB"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.2"
+                android:layout_marginBottom="12dp" />
+ 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Your data belongs to you. CampusKey saves your credentials locally on your device and never transmits them elsewhere. With zero sensitive permissions and an open-source codebase on GitHub, this tool is built on transparency and trust."
+                android:textColor="#8B949E"
+                android:textSize="13sp"
+                android:justificationMode="inter_word"
+                tools:targetApi="o"
+                android:lineSpacingExtra="3dp" />
+        </LinearLayout>
+
+
+
+
+        <!-- Community Feedback Wall -->
+        <LinearLayout
+            android:id="@+id/communityWallSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginHorizontal="20dp"
+            android:background="@drawable/bg_surface_card"
+            android:orientation="vertical"
+            android:padding="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/missionCard">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="COMMUNITY WALL"
+                    android:textColor="#8957E5"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.2" />
+                <TextView
+                    android:id="@+id/btnRateApp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:text="+ Add / Edit Rating"
+                    android:textColor="#58A6FF"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true" />
+            </RelativeLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/feedbackRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="100dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+            <TextView
+                android:id="@+id/btnSeeAllFeedbacks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_gravity="center_horizontal"
+                android:text="See All Community Feedback →"
+                android:textColor="#58A6FF"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:padding="8dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?attr/selectableItemBackground"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvEmptyFeedback"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="No feedback yet. Be the first to rate!"
+                android:textColor="#484F58"
+                android:textSize="12sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- Feedback / Join Mission Card -->
+        <LinearLayout
+            android:id="@+id/feedbackCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginHorizontal="20dp"
+            android:background="@drawable/bg_surface_card"
+            android:orientation="vertical"
+            android:padding="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/communityWallSection">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="SPECIAL THANKS"
+                android:text="JOIN THE MISSION"
+                android:textColor="#D29922"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.2"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="I value your feedback! If you have suggestions to make CampusKey better or if you want to join me in improving this project, please reach out. Together, we can make campus life smoother."
+                android:textColor="#8B949E"
+                android:textSize="13sp"
+                android:justificationMode="inter_word"
+                tools:targetApi="o"
+                android:lineSpacingExtra="3dp" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnFeedback"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/btn_indigo"
+                android:text="Give Valuable Feedback"
+                android:textAllCaps="false"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnDownloadApp"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/btn_secondary"
+                android:text="Download Latest App"
+                android:textAllCaps="false"
+                android:textColor="#8B949E"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+
+        
+        <!-- Special Thanks Card (Restored & Fixed) -->
+        <LinearLayout
+            android:id="@+id/thanksSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginHorizontal="20dp"
+            android:background="@drawable/bg_surface_card"
+            android:orientation="vertical"
+            android:padding="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/feedbackCard">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="LEADERBOARD &amp; SPECIAL THANKS"
                 android:textColor="#D29922"
                 android:textSize="10sp"
                 android:textStyle="bold"
@@ -133,8 +336,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/thanksRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="200dp"
+                android:layout_height="132dp"
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/item_thanks" />
@@ -142,12 +344,23 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="16dp"
                 android:gravity="center"
-                android:text="For promoting CampusKey and supporting the developer community."
+                android:text="Ranking the top CampusKey heroes based on total successful connections!"
                 android:textColor="#8B949E"
-                android:textSize="12sp" />
+                android:textSize="11sp" />
 
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnJoinLeaderboard"
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/btn_secondary"
+                android:text="+ Add / Edit Leaderboard Profile"
+                android:textAllCaps="false"
+                android:textColor="#58A6FF"
+                android:textSize="13sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
